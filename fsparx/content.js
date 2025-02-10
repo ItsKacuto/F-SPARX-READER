@@ -1,6 +1,5 @@
 // F* Sparx: Sparx Reader
 // Made by Zin
-// Heavily recommend SenAI for maths
 
 let copiedText = ''; // Store copied text globally
 let lastCheckedTime = 0;
@@ -68,7 +67,7 @@ answerPane.innerHTML = '<strong>Answer:</strong><p id="answerText">No answer yet
 document.body.appendChild(answerPane);
 
 async function queryCohere(question, options, context) {
-    const apiKey = 'KEY-HERE'; // !!!!!~ YOUR API KEY GOES IN THE "KEY-HERE" SECTION !!!!!!
+    const apiKey = 'B6EFvcGsTS8Ot92zWCMeTsBmVmrYasLLBMcViPe4'; // INPUT YOUR KEY HERE!!!
     const response = await fetch('https://api.cohere.ai/generate', {
         method: 'POST',
         headers: {
@@ -150,12 +149,60 @@ async function autoAnswer() {
 }
 
 
+function getTextFromBook() {
+    // Select the _Book_ element using class*="_Book_"
+    const bookElement = document.querySelector('.read-content[class*="_Book_"]');
+    if (!bookElement) {
+        console.error("No _Book_ element found.");
+        return '';
+    }
+
+    // Find all <p> elements inside the _Book_ container
+    const paragraphs = bookElement.querySelectorAll('p');
+    let combinedText = '';
+
+    // Iterate over all <p> elements and extract their text
+    paragraphs.forEach(paragraph => {
+        if (paragraph.innerText) {
+            combinedText += paragraph.innerText.trim() + ' ';
+        }
+    });
+
+    return combinedText.trim();
+}
+
+function copyTextToClipboard(text) {
+    copiedText = text;
+    console.log("Text copied to variable copiedText.");
+}
 
 
+function processTextForAI() {
+    const extractedText = getTextFromBook();
+    
+    if (extractedText) {
+        copyTextToClipboard(extractedText); 
+    } else {
+        console.error("No text found in the _Book_ element.");
+    }
+}
+
+
+processTextForAI();
+
+
+const observer = new MutationObserver(() => {
+    processTextForAI(); // Re-process text if new content appears
+});
 
 observer.observe(document.body, {
     childList: true,
     subtree: true
 });
 
-console.log("MutationObserver is now watching for changes.");
+
+
+
+
+
+
